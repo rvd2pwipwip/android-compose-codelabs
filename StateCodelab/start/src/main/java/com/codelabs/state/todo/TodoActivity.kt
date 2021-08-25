@@ -21,20 +21,36 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codelabs.state.ui.StateCodelabTheme
 
 class TodoActivity : AppCompatActivity() {
 
-    val todoViewModel by viewModels<TodoViewModel>()
+//  private val todoViewModel by viewModels<TodoViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            StateCodelabTheme {
-                Surface {
-                    // TODO: build the screen in compose
-                }
-            }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      StateCodelabTheme {
+        Surface {
+          TodoActivityScreen()
         }
+      }
     }
+  }
+}
+
+@Composable
+fun TodoActivityScreen(todoViewModel: TodoViewModel = viewModel()) {
+  val items: List<TodoItem> by todoViewModel.todoItems.observeAsState(initial = listOf())
+  TodoScreen(
+    items = items,
+//    onAddItem = { todoViewModel.addItem(it) },
+    onAddItem = todoViewModel::addItem,
+//    onRemoveItem = { todoViewModel.removeItem(it) }
+    onRemoveItem = todoViewModel::removeItem
+  )
 }
